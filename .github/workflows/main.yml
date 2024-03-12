@@ -1,0 +1,39 @@
+# on:
+#   push:
+#     branches:
+#       - main
+
+name: CD
+on: [push]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.22
+
+      - name: Build
+        working-directory: authentication
+        run: go build -v cmd/main.go
+
+      - name: Zip
+        working-directory: authentication
+        run: zip -j deploy.zip main
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Upload Zip
+        working-directory: authentication
+        run: aws lambda update-function-code --function-name authentication --zip-file fileb://deploy.zip
