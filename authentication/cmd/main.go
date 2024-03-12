@@ -24,7 +24,6 @@ func main() {
 
 // used for testing
 func main2() {
-
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")

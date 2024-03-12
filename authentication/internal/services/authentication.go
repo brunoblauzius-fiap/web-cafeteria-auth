@@ -12,6 +12,7 @@ import (
 
 type CognitoClient interface {
 	InitiateAuth(ctx context.Context, params *cognitoidentityprovider.InitiateAuthInput, optFns ...func(*cognitoidentityprovider.Options)) (*cognitoidentityprovider.InitiateAuthOutput, error)
+	RespondToAuthChallenge(ctx context.Context, params *cognitoidentityprovider.RespondToAuthChallengeInput, optFns ...func(*cognitoidentityprovider.Options)) (*cognitoidentityprovider.RespondToAuthChallengeOutput, error)
 }
 
 type Authentication struct {
@@ -26,7 +27,7 @@ func New(log logging.Logger, c CognitoClient) Authentication {
 	}
 }
 
-func (s Authentication) Auth(ctx context.Context, request models.AuthenticationRequest) (string, error) {
+func (s Authentication) Auth(ctx context.Context, request models.AuthenticationRequest) (*models.AuthenticationResponse, error) {
 	s.logger.Info("Serving Authentication event", logging.String("email", request.Email))
 	clientId, err := internalConfig.AwsClientIdFromEnv()
 	if err != nil {
@@ -44,10 +45,45 @@ func (s Authentication) Auth(ctx context.Context, request models.AuthenticationR
 
 	authResult, err := s.cognitoClient.InitiateAuth(ctx, authInput)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	token := *authResult.Session
+	authenticationResult := authResult.AuthenticationResult
 
-	return token, nil
+	if authenticationResult != nil {
+		response := models.AuthenticationResponse{
+			AccessToken: *authenticationResult.AccessToken,
+			ExpiresIn:   *&authenticationResult.ExpiresIn,
+			TokenType:   *authenticationResult.TokenType,
+		}
+
+		return &response, nil
+	}
+
+	if authResult.ChallengeName == "NEW_PASSWORD_REQUIRED" {
+		respondInput := &cognitoidentityprovider.RespondToAuthChallengeInput{
+			ChallengeName: types.ChallengeNameTypeNewPasswordRequired,
+			ChallengeResponses: map[string]string{
+				"NEW_PASSWORD": request.Password,
+				"USERNAME":     request.Email,
+			},
+			ClientId: &clientId,
+			Session:  &*authResult.Session,
+		}
+		authResult, err := s.cognitoClient.RespondToAuthChallenge(ctx, respondInput)
+		if err != nil {
+			return nil, err
+		}
+
+		authenticationResult := authResult.AuthenticationResult
+		response := models.AuthenticationResponse{
+			AccessToken: *authenticationResult.AccessToken,
+			ExpiresIn:   *&authenticationResult.ExpiresIn,
+			TokenType:   *authenticationResult.TokenType,
+		}
+
+		return &response, nil
+	}
+
+	return nil, nil
 }

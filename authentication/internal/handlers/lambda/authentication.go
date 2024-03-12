@@ -17,7 +17,7 @@ const (
 )
 
 type Service interface {
-	Auth(ctx context.Context, request models.AuthenticationRequest) (string, error)
+	Auth(ctx context.Context, request models.AuthenticationRequest) (*models.AuthenticationResponse, error)
 }
 
 type Authentication struct {
@@ -33,7 +33,6 @@ func New(log logging.Logger, srv Service) Authentication {
 }
 
 func (s Authentication) Handler(e events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-
 	var request models.AuthenticationRequest
 
 	if err := json.Unmarshal([]byte(e.Body), &request); err != nil {
@@ -46,10 +45,10 @@ func (s Authentication) Handler(e events.APIGatewayProxyRequest) (events.APIGate
 		return transport.SendValidationError(http.StatusBadRequest, ErrorInvalidEmail)
 	}
 
-	token, err := s.service.Auth(context.Background(), request)
+	response, err := s.service.Auth(context.Background(), request)
 	if err != nil {
 		return transport.SendError(http.StatusInternalServerError, err.Error())
 	}
 
-	return transport.Send(http.StatusOK, token)
+	return transport.Send(http.StatusOK, *response)
 }
