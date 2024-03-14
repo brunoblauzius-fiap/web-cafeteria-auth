@@ -26,6 +26,8 @@ jobs:
       - name: Zip
         working-directory: authentication
         run: zip -j deploy.zip main
+
+      - name: Test
         run : |
           echo "Environment variable TEST_VAR: ${{ vars.AWS_REGION }}"
 
