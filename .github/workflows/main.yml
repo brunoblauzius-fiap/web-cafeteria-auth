@@ -1,15 +1,14 @@
+name: CD
+on: [push]
 # on:
 #   push:
 #     branches:
 #       - main
 
-name: CD
-on: [push]
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: production
+    environment: production # TODO remove after tests
 
     steps:
       - name: Checkout
@@ -27,10 +26,6 @@ jobs:
       - name: Zip
         working-directory: authentication
         run: zip -j deploy.zip main
-
-      - name: Test
-        run : |
-          echo "Environment variable TEST_VAR: ${{ vars.AWS_REGION }}"
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
