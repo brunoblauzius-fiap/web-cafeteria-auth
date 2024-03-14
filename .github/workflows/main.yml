@@ -21,7 +21,7 @@ jobs:
 
       - name: Build
         working-directory: authentication
-        run: go build -o bootstrap -v cmd/main.go
+        run: GOOS=linux GOARCH=arm64 go build -tags lambda.norpc -o bootstrap cmd/main.go
 
       - name: Zip
         working-directory: authentication
