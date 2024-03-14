@@ -21,7 +21,7 @@ jobs:
 
       - name: Build
         working-directory: authentication
-        run: go build -v cmd/main.go
+        run: go build -o bootstrap -v cmd/main.go
 
       - name: Zip
         working-directory: authentication
