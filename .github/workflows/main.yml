@@ -25,7 +25,7 @@ jobs:
 
       - name: Zip
         working-directory: authentication
-        run: zip -j deploy.zip main
+        run: zip -j deploy.zip bootstrap
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
