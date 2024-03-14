@@ -26,6 +26,8 @@ jobs:
       - name: Zip
         working-directory: authentication
         run: zip -j deploy.zip main
+        run : |
+          echo "Environment variable TEST_VAR: ${{ vars.AWS_REGION }}"
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
