@@ -8,7 +8,7 @@ on: [push]
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: production # TODO remove after tests
+    environment: production
 
     steps:
       - name: Checkout
