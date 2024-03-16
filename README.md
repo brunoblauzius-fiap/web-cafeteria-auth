@@ -13,4 +13,4 @@ curl --location 'https://7cylcgukg9.execute-api.us-east-1.amazonaws.com/authenti
 
 ```
 
-https://www.loom.com/share/e1b61d78c2424c0ebcfbea44d80fb9c4
+Video: https://www.loom.com/share/e1b61d78c2424c0ebcfbea44d80fb9c4
