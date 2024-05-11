@@ -38,3 +38,7 @@ variable "REGION" {
   type = string
   default = "us-east-1"
 }
+
+variable "region" {
+  default = "sa-east-1"  # Região da AWS São Paulo
+}
