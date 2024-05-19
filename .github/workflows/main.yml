@@ -43,8 +43,9 @@ jobs:
         run: terraform init
     
       - name: Terraform Plan
-        run: | # terraform plan -input=false -var-file="terraform.tfvars"
-            terraform plan -input=false
+        run: |
+              terraform plan -input=false -var-file="terraform.tfvars"
+            # terraform plan -input=false
 
       - name: Upload Zip
         working-directory: authentication
