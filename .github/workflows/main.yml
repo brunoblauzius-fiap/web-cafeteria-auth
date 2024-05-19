@@ -46,12 +46,13 @@ jobs:
     
       - name: Terraform Plan
         working-directory: ./terraform
-        run: | #terraform plan -input=false -var-file="terraform.tfvars"
-              terraform plan -input=false
+        run: | 
+              terraform plan -input=false -var-file="terraform.tfvars"
       
       - name: Terraform Apply Deploy
         if: github.ref_name == 'main'
-        run: | # terraform apply -auto-approve -input=false -var-file="terraform.tfvars"
+        working-directory: ./terraform
+        run: | 
           terraform apply -auto-approve -input=false -var-file="terraform.tfvars"
 
       # - name: Upload Zip
