@@ -8,7 +8,7 @@ resource "aws_lambda_function" "gera_token" {
   # handler       = "lambda_function.lambda_handler"
   # runtime       = "python3.8"
   handler       = "main"  # O handler é o nome do executável Go
-  runtime       = "go1.x"
+  runtime       = "provided.al2"
 
   filename      = "${path.module}/../authentication/lambda_function.zip"
   source_code_hash = filebase64sha256("${path.module}/../authentication/lambda_function.zip")
