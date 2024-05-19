@@ -34,6 +34,18 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ vars.AWS_REGION }}
 
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.1.0
+
+      - name: Terraform Init
+        run: terraform init
+    
+      - name: Terraform Plan
+        run: | # terraform plan -input=false -var-file="terraform.tfvars"
+            terraform plan -input=false
+
       - name: Upload Zip
         working-directory: authentication
         run: aws lambda update-function-code --function-name authentication --zip-file fileb://deploy.zip
