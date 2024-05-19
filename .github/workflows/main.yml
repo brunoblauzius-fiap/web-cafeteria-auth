@@ -52,6 +52,9 @@ jobs:
       - name: Terraform Apply Deploy
         if: github.ref_name == 'main'
         working-directory: ./terraform
+        env:
+          TF_VAR_AWS_CLIENT_ID : ${{ secrets.AWS_ACCESS_KEY_ID }}
+          TF_VAR_FILE : ${{github.sha}}.zip
         run: | 
           terraform apply -auto-approve -input=false -var-file="terraform.tfvars"
 
