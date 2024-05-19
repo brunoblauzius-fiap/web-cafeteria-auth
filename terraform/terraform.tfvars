@@ -6,4 +6,4 @@ NOME_REPOSITORIO_USER_AUTH="user-autentication"
 BUCKET = "tf-bruno-b-fiap-bucket"
 COGNITO_USER_POOL = "fiap-cognito-pool"
 LAMBDA_AUTH_NAME = "lamda-user-auth"
-
+REGION="us-east-1"
