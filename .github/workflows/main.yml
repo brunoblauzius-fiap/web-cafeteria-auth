@@ -25,7 +25,8 @@ jobs:
 
       - name: Zip
         working-directory: authentication
-        run: zip -j deploy.zip bootstrap
+        run: | # GOOS=linux GOARCH=arm64 go build -tags lambda.norpc -o bootstrap cmd/main.go && zip lambda_function.zip bootstrap
+          zip -j lambda_function.zip bootstrap
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -34,6 +35,27 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ vars.AWS_REGION }}
 
-      - name: Upload Zip
-        working-directory: authentication
-        run: aws lambda update-function-code --function-name authentication --zip-file fileb://deploy.zip
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.1.0
+
+      - name: Terraform Init
+        working-directory: ./terraform
+        run: terraform init
+    
+      - name: Terraform Plan
+        working-directory: ./terraform
+        run: | #terraform plan -input=false -var-file="terraform.tfvars"
+              terraform plan -input=false
+      
+      - name: Terraform Apply Deploy
+        if: github.ref_name == 'main'
+        run: |
+          # terraform apply -auto-approve -input=false -var-file="terraform.tfvars"
+          terraform apply -auto-approve -input=false
+
+      # - name: Upload Zip
+      #   if: ${{github.ref_name}} == 'main'
+      #   working-directory: authentication
+      #   run: aws lambda update-function-code --function-name authentication --zip-file fileb://lambda_function.zip

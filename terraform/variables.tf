@@ -22,9 +22,9 @@ variable "LAMBDA_AUTH_NAME" {
   type = string
 }
 
-variable "IMAGE_URL" {
-  type = string
-}
+# variable "IMAGE_URL" {
+#   type = string
+# }
 
 variable "CLUSTER_NAME" {
   type = string
