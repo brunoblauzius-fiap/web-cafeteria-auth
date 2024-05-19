@@ -50,7 +50,7 @@ jobs:
               terraform plan -input=false
       
       - name: Terraform Apply Deploy
-        if: github.ref_name == 'dev'
+        if: github.ref_name == 'main'
         run: |
           # terraform apply -auto-approve -input=false -var-file="terraform.tfvars"
           terraform apply -auto-approve -input=false
